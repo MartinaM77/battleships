@@ -1,41 +1,127 @@
 import React, { useEffect, useState } from 'react';
 import BattleCell from './BattleCell.js';
 
-function createGrid(gridSize) {
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function isValid(currentCell, gridCells) {
+  if (
+    !gridCells[currentCell.row] ||
+    !gridCells[currentCell.row][currentCell.col]
+  ) {
+    return false;
+  }
+
+  if (gridCells[currentCell.row][currentCell.col].isShip) {
+    return false;
+  }
+
+  return true;
+}
+
+function getNextCell(currentCell, shipDirection) {
+  let nextCell = { ...currentCell };
+
+  switch (shipDirection) {
+    case 'left':
+      nextCell.row -= 1;
+      break;
+    case 'top':
+      nextCell.col -= 1;
+      break;
+    case 'right':
+      nextCell.row += 1;
+      break;
+    case 'bottom':
+      nextCell.col += 1;
+      break;
+    default:
+      break;
+  }
+
+  return nextCell;
+}
+
+function createShip(shipSize, gridSize, cells) {
+  let gridCells = [...cells];
+  let ship = { coordinates: [], isSunk: false };
+
+  let currentCell = {
+    row: getRandomInt(gridSize),
+    col: getRandomInt(gridSize),
+  };
+  const directions = ['left', 'top', 'right', 'bottom'];
+  const randomIndex = getRandomInt(directions.length - 1);
+  let shipDirection = directions[randomIndex];
+
+  if (!isValid(currentCell, gridCells)) {
+    return createShip(shipSize, gridSize, gridCells);
+  }
+  ship.coordinates.push(currentCell);
+
+  for (let i = 1; i < shipSize; i++) {
+    let nextCell = getNextCell(currentCell, shipDirection);
+    if (!isValid(nextCell, gridCells)) {
+      return createShip(shipSize, gridSize, gridCells);
+    }
+    ship.coordinates.push(nextCell);
+    currentCell = nextCell;
+  }
+
+  return ship;
+}
+
+function createGrid(gridSize, shipData) {
   let gridCells = [];
+  let ships = [];
+
   for (let row = 0; row < gridSize; row++) {
     let gridRow = [];
     for (let col = 0; col < gridSize; col++) {
-      gridRow.push({row: row, col: col})
+      gridRow.push({ row: row, col: col });
     }
     gridCells.push(gridRow);
   }
-  return gridCells;
+
+  for (let ship of shipData) {
+    for (let i = 0; i < ship.amount; i++) {
+      let newShip = createShip(ship.size, gridSize, gridCells);
+      ships.push(newShip);
+      for (let coordinates of newShip.coordinates) {
+        gridCells[coordinates.row][coordinates.col].isShip = true;
+      }
+    }
+  }
+
+  return { cells: gridCells, ships: ships };
 }
 
-export default function BattleGrid({ size }) {
+export default function BattleGrid({ size, shipData }) {
   const [gridCells, setGridCells] = useState(null);
+  const [ships, setShips] = useState(null);
 
   useEffect(() => {
-    const gridCells = createGrid(size);
-    setGridCells(gridCells);
-  }, [size]);
+    const { cells, ships } = createGrid(size, shipData);
+    setGridCells(cells);
+    setShips(ships);
+  }, [size, shipData]);
 
   return (
     <div className='grid'>
-      { gridCells && gridCells.map((rowData, row) =>
-        (
-          <div key={'row'+row} className='row'>
-            {rowData.map((cellData,col)=>(
+      {gridCells &&
+        gridCells.map((rowData, row) => (
+          <div key={'row' + row} className='row'>
+            {rowData.map((cellData, col) => (
               <BattleCell
-                key={row+''+col}
+                key={row + '' + col}
                 row={row}
                 col={col}
+                isShip={cellData.isShip}
               />
             ))}
           </div>
-        ))
-      }
+        ))}
     </div>
   );
 }
