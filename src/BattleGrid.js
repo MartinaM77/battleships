@@ -1,112 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import BattleCell from './BattleCell.js';
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
-function isValid(currentCell, gridCells) {
-  if (
-    !gridCells[currentCell.row] ||
-    !gridCells[currentCell.row][currentCell.col]
-  ) {
-    return false;
-  }
-
-  if (gridCells[currentCell.row][currentCell.col].isShip) {
-    return false;
-  }
-
-  return true;
-}
-
-function getNextCell(currentCell, shipDirection) {
-  let nextCell = { ...currentCell };
-
-  switch (shipDirection) {
-    case 'left':
-      nextCell.row -= 1;
-      break;
-    case 'top':
-      nextCell.col -= 1;
-      break;
-    case 'right':
-      nextCell.row += 1;
-      break;
-    case 'bottom':
-      nextCell.col += 1;
-      break;
-    default:
-      break;
-  }
-
-  return nextCell;
-}
-
-function createShip(shipSize, gridSize, cells) {
-  let gridCells = [...cells];
-  let ship = { coordinates: [], isSunk: false };
-
-  let currentCell = {
-    row: getRandomInt(gridSize),
-    col: getRandomInt(gridSize),
-  };
-  const directions = ['left', 'top', 'right', 'bottom'];
-  const randomIndex = getRandomInt(directions.length - 1);
-  let shipDirection = directions[randomIndex];
-
-  if (!isValid(currentCell, gridCells)) {
-    return createShip(shipSize, gridSize, gridCells);
-  }
-  ship.coordinates.push(currentCell);
-
-  for (let i = 1; i < shipSize; i++) {
-    let nextCell = getNextCell(currentCell, shipDirection);
-    if (!isValid(nextCell, gridCells)) {
-      return createShip(shipSize, gridSize, gridCells);
-    }
-    ship.coordinates.push(nextCell);
-    currentCell = nextCell;
-  }
-
-  return ship;
-}
-
-function createGrid(gridSize, shipData) {
-  let gridCells = [];
-  let ships = [];
-
-  for (let row = 0; row < gridSize; row++) {
-    let gridRow = [];
-    for (let col = 0; col < gridSize; col++) {
-      gridRow.push({ row: row, col: col });
-    }
-    gridCells.push(gridRow);
-  }
-
-  for (let ship of shipData) {
-    for (let i = 0; i < ship.amount; i++) {
-      let newShip = createShip(ship.size, gridSize, gridCells);
-      ships.push(newShip);
-      for (let coordinates of newShip.coordinates) {
-        gridCells[coordinates.row][coordinates.col].isShip = true;
-      }
-    }
-  }
-
-  return { cells: gridCells, ships: ships };
-}
-
-export default function BattleGrid({ size, shipData }) {
-  const [gridCells, setGridCells] = useState(null);
-  const [ships, setShips] = useState(null);
-
-  useEffect(() => {
-    const { cells, ships } = createGrid(size, shipData);
-    setGridCells(cells);
-    setShips(ships);
-  }, [size, shipData]);
-
+export default function BattleGrid({ gridCells, clickCell }) {
   return (
     <div className='grid'>
       {gridCells &&
@@ -117,7 +12,8 @@ export default function BattleGrid({ size, shipData }) {
                 key={row + '' + col}
                 row={row}
                 col={col}
-                isShip={cellData.isShip}
+                hitState={cellData.hitState}
+                clickCell={clickCell}
               />
             ))}
           </div>

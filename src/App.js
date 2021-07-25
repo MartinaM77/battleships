@@ -1,5 +1,5 @@
 import './App.css';
-import BattleGrid from './BattleGrid.js';
+import BattleGridContainer from './BattleGridContainer.js';
 
 function App() {
   const shipData = [
@@ -12,7 +12,7 @@ function App() {
       <header className='header'>
         <h1>Battleships</h1>
       </header>
-      <BattleGrid size={10} shipData={shipData} />
+      <BattleGridContainer size={10} shipData={shipData} />
     </div>
   );
 }

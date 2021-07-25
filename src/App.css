@@ -12,4 +12,29 @@
   width: 5vh;
   max-width: 7vw;
   max-height: 7vw;
+  -webkit-transition: background-color 0.2s, background-image 0.5s;
+  transition: background-color 0.2s, background-image 0.5s;
+}
+
+.cell:hover {
+  cursor: pointer;
+  -webkit-box-shadow: inset 0px 0px 3px 0px #b78686;
+  box-shadow: inset 0px 0px 3px 0px #b78686;
+}
+
+.cell:active {
+  -webkit-box-shadow: inset 0px 0px 5px 2px #b78686;
+  box-shadow: inset 0px 0px 5px 2px #b78686;
+}
+
+.water {
+  background-image: url(wave.svg);
+}
+
+.hit, .sunk {
+  background-image: url(fire.svg);
+}
+
+.sunk {
+  background-color: #fab9b9;
 }
