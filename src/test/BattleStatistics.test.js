@@ -45,3 +45,18 @@ test('does not render remaining number of ships if it is zero', () => {
   const successElement = screen.queryByText('Remaining ships: 0');
   expect(successElement).not.toBeInTheDocument();
 });
+
+test('renders Play again button if remaining number of ships is zero', () => {
+  const hits = 2;
+  const attempts = 10;
+  const remainingShipsCount = 0;
+  render(
+    <BattleStatistics
+      remainingShipsCount={remainingShipsCount}
+      hits={hits}
+      attempts={attempts}
+    />
+  );
+  const successElement = screen.getByRole('button', { name: 'Play again?' });
+  expect(successElement).toBeInTheDocument();
+});

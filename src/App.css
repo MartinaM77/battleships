@@ -50,3 +50,21 @@
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
 }
+
+.play-again {
+  border-radius: 1px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #cacaca;
+}
+
+.play-again:hover {
+  cursor: pointer;
+  -webkit-box-shadow: 0px 0px 3px 2px #b78686;
+  box-shadow: 0px 0px 3px 2px #b78686;
+}
+
+.play-again:active {
+  background-color: #f2e8e8;
+  border: 1px solid #b78686;
+}

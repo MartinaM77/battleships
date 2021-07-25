@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import './App.css';
 import BattleGridContainer from './BattleGridContainer.js';
 
 function App() {
+  const [gameId, setGameId] = useState(1);
   const shipData = [
     { type: 'battleship', size: 5, amount: 1 },
     { type: 'destroyer', size: 4, amount: 2 },
@@ -12,7 +14,12 @@ function App() {
       <header className='header'>
         <h1>Battleships</h1>
       </header>
-      <BattleGridContainer size={10} shipData={shipData} />
+      <BattleGridContainer
+        gameId={gameId}
+        size={10}
+        shipData={shipData}
+        playAgain={() => setGameId(gameId + 1)}
+      />
     </div>
   );
 }

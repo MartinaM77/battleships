@@ -98,7 +98,12 @@ function createGrid(gridSize, shipData) {
   return { cells: gridCells, ships: ships };
 }
 
-export default function BattleGridContainer({ size, shipData }) {
+export default function BattleGridContainer({
+  gameId,
+  size,
+  shipData,
+  playAgain,
+}) {
   const [gridCells, setGridCells] = useState(null);
   const [ships, setShips] = useState(null);
   const [attempts, setAttempts] = useState(0);
@@ -150,9 +155,11 @@ export default function BattleGridContainer({ size, shipData }) {
     <div>
       <BattleGrid gridCells={gridCells} clickCell={clickCell} />
       <BattleStatistics
+        gameId={gameId}
         remainingShipsCount={remainingShipsCount}
         hits={hits}
         attempts={attempts}
+        playAgain={playAgain}
       />
     </div>
   );
