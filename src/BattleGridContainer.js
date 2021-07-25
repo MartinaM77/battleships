@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BattleGrid from './BattleGrid.js';
+import BattleStatistics from './BattleStatistics.js';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -100,11 +101,15 @@ function createGrid(gridSize, shipData) {
 export default function BattleGridContainer({ size, shipData }) {
   const [gridCells, setGridCells] = useState(null);
   const [ships, setShips] = useState(null);
+  const [attempts, setAttempts] = useState(0);
+  const [hits, setHits] = useState(0);
 
   useEffect(() => {
     const { cells, ships } = createGrid(size, shipData);
     setGridCells(cells);
     setShips(ships);
+    setAttempts(0);
+    setHits(0);
   }, [size, shipData]);
 
   const clickCell = (row, col) => {
@@ -130,11 +135,25 @@ export default function BattleGridContainer({ size, shipData }) {
           cells[coordinates.row][coordinates.col].hitState = 'sunk';
         }
       }
+      setHits(hits + 1);
     } else {
       cells[row][col].hitState = 'water';
     }
     setGridCells(cells);
+    setAttempts(attempts + 1);
   };
 
-  return <BattleGrid gridCells={gridCells} clickCell={clickCell} />;
+  let remainingShipsCount =
+    (ships && ships.filter((ship) => ship.isSunk === false).length) || 0;
+
+  return (
+    <div>
+      <BattleGrid gridCells={gridCells} clickCell={clickCell} />
+      <BattleStatistics
+        remainingShipsCount={remainingShipsCount}
+        hits={hits}
+        attempts={attempts}
+      />
+    </div>
+  );
 }
